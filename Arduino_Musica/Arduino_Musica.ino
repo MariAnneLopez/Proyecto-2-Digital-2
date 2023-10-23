@@ -1,4 +1,4 @@
-// IE3027: Electrónica Digital 2 - 2021
+// Electrónica Digital 2
 // Proyecto 2
 // María Andrea López
 // Enma López
