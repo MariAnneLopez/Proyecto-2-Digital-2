@@ -1,11 +1,14 @@
-// IE3027: Electrónica Digital 2 - 2021
+// Electrónica Digital 2
 // Proyecto 2
 // María Andrea López
 // Enma López
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // Added Libraries
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -36,7 +39,9 @@
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};  
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // Functions Prototypes
+//***************************************************************************************************************************************
 //***************************************************************************************************************************************
 void LCD_Init(void);
 void LCD_CMD(uint8_t cmd);
@@ -48,54 +53,50 @@ void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c);
 void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
-
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
-bool Collision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);
-
-const int chipSelect = PA_3; //cs PIN
 void MapSD(void);
 int ASCII_Hex(int a);
+
 void botones(void);
 void flechita(int x, int y, int c);
+bool Collision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2);
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // VARIABLES
+//***************************************************************************************************************************************
 //***************************************************************************************************************************************
 Sd2Card card;     // SD
 SdVolume volume;
 SdFile root;
 uint8_t maps[1000];
-//***************************************************************************************************************************************
+const int chipSelect = PA_3;
+
 int estado_boton1 = 0;    // Botones
 int estado_boton2 = 0;
-
 uint8_t contador = 0;
 uint8_t aceptar = 0;
 uint8_t aceptar2 = 0;
-
 bool izquierda = false;
 bool derecha = false;
 bool izquierda2 = false;
 bool derecha2 = false;
-
 int recibido = 0;
-int Ganador = 0;
-
 int inByte;
 int boton;
 int bandera = 0;
 int bandera2 = 0;
 int banderamenu = 0;
-//***************************************************************************************************************************************
+
 const int buzzerPin = 40; // Musica
 int musica = 0;
-//***************************************************************************************************************************************
+
 int bandera_musica1 = 1;  // Settings
 int bandera_musica2 = 0;
 int modo_clasico = 1;
 int modo_secundario = 0;
-//***************************************************************************************************************************************
+
 extern uint8_t NaveGalaga1[];   // Imagenes
 extern uint8_t NaveGalaga2[];
 extern uint8_t NaveGalaga3[];
@@ -106,19 +107,15 @@ extern uint8_t enemigo2[];
 extern uint8_t enemigo3[];
 extern uint8_t explosion1[];
 
-bool collision = false;
-bool collision2 = false;
+int NaveGalaga1_x = 145; // Variables iniciales de los juegos
+int NaveGalaga1_y = 198;
+int NaveGalaga1_width = 32; 
+int NaveGalaga1_height = 32;
+int NaveGalaga2_x = 225; 
+int NaveGalaga2_y = 198;
+int NaveGalaga2_width = 32; 
+int NaveGalaga2_height = 32;
 
-int NaveGalaga1_x = 145; // posicion x
-int NaveGalaga1_y = 198; // posicion y
-int NaveGalaga1_width = 32; // ancho de bitmap
-int NaveGalaga1_height = 32; // altura de bitmap
-
-int NaveGalaga2_x = 225; // posicion x
-int NaveGalaga2_y = 198; // posicion y
-int NaveGalaga2_width = 32; // ancho de bitmap
-int NaveGalaga2_height = 32; // altura de bitmap
-//***************************************************************************************************************************************
 int enemigo_x[15] = {55, 104, 153, 201, 250, 56, 105, 154, 202, 251, 56, 105, 154, 202, 251}; // Primer conjunto de enemigos
 int enemigo_y[15] = {35, 35, 35, 35, 35, 71, 71, 71, 71, 71, 104, 104, 104, 104, 104};
 int enemigo_width[15] = {17, 17, 17, 17, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
@@ -132,7 +129,7 @@ int enemigo2_width[15] = {17, 17, 17, 17, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15
 int enemigo2_height[15] = {16, 16, 16, 16, 16, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 int enemigo2_index[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int enemigo2_hit[5] = {0, 0, 0, 0, 0};
-//***************************************************************************************************************************************
+
 int enemigo_x1[6] = {49, 98, 50, 99, 50, 99}; // Segundo conjunto de enemigos
 int enemigo_y1[6] = {35, 35, 71, 71, 104, 104};
 int enemigo_width1[6] = {17, 17, 15, 15, 15, 15};
@@ -146,7 +143,7 @@ int enemigo2_width1[6] = {17, 17, 15, 15, 15, 15};
 int enemigo2_height1[6] = {16, 16, 10, 10, 10, 10};
 int enemigo2_index1[6] = {0, 0, 0, 0, 0, 0};
 int enemigo2_hit1[2] = {0, 0};
-//***************************************************************************************************************************************
+
 int enemigo_x2[6] = {209, 258, 210, 259, 210, 259};
 int enemigo_y2[6] = {35, 35, 71, 71, 104, 104};
 int enemigo_width2[6] = {17, 17, 15, 15, 15, 15};
@@ -160,15 +157,13 @@ int enemigo2_width2[6] = {17, 17, 15, 15, 15, 15};
 int enemigo2_height2[6] = {16, 16, 10, 10, 10, 10};
 int enemigo2_index2[6] = {0, 0, 0, 0, 0, 0};
 int enemigo2_hit2[2] = {0, 0};
-//***************************************************************************************************************************************
-int contador_enemigos; // Variables primer jugador
+
+int contador_enemigos;         // Variables primer jugador
 bool enemiesMove1 = false;
 bool enemiesMove2 = false;
 bool enemiesMove3 = false;
-
 bool LimiteNaveIzquierda = false;
 bool LimiteNaveDerecha = false;
-
 int bandera_disparo = 0;
 int municion = 40;
 int municion1 = 15;
@@ -177,19 +172,12 @@ int disparo_y = 0;
 int disparo_x = 145;
 bool disparo_completado = true;
 
-int Victoria = 0;
-
-unsigned long previousMillis = 0;
-const long interval = 42;
-//***************************************************************************************************************************************
-int contador_enemigos2; // Variables segundo jugador
+int contador_enemigos2;         // Variables segundo jugador
 bool enemiesMove1_2 = false;
 bool enemiesMove2_2 = false;
 bool enemiesMove3_2 = false;
-
 bool LimiteNaveIzquierda_2 = false;
 bool LimiteNaveDerecha_2 = false;
-
 int bandera_disparo2 = 0;
 int municion2 = 15;
 String texto_municion2;
@@ -197,15 +185,23 @@ int disparo_y2 = 0;
 int disparo_x2 = 145;
 bool disparo_completado2 = true;
 
-int Victoria2 = 0;
 
+int Victoria = 0;                // Estado del juego
+unsigned long previousMillis = 0;
+const long interval = 42;
+int Victoria2 = 0;
 unsigned long previousMillis2 = 0;
 const long interval2 = 42;
+bool collision = false;
+bool collision2 = false;
+int Ganador = 0;
 
-File myFile;
+File myFile; // Archivo leido de SD
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // Setup
+//***************************************************************************************************************************************
 //***************************************************************************************************************************************
 void setup() {
   
@@ -214,22 +210,22 @@ void setup() {
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
   Serial.println("Start");
 
-// LCD 
+  // LCD 
   LCD_Init();
   LCD_Clear(0x00);
 
-// SERIAL PORTS
- Serial.begin(9600);
- Serial2.begin(9600);
- Serial5.begin(9600);
+  // SERIAL PORTS
+  Serial.begin(9600);
+  Serial2.begin(9600); // Music Arduino
+  Serial5.begin(9600); // Buttons Arduino
 
-// GPIO
+  // GPIO
   pinMode(buzzerPin, OUTPUT);
 
-// SD
+  // SD
   SPI.setModule(0);
   Serial.print("\nInitializing SD card...");
-  pinMode(PA_3, OUTPUT);     // change this to 53 on a mega
+  pinMode(PA_3, OUTPUT);
 
   if (!card.init(SPI_HALF_SPEED, chipSelect)) {
     Serial.println("initialization failed. Things to check:");
@@ -256,8 +252,7 @@ void setup() {
     default:
       Serial.println("Unknown");
   }
-
-  // Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
+  
   if (!volume.init(card)) {
     Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
     return;
@@ -297,11 +292,17 @@ void setup() {
 }
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // Loop
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 void loop() {
+  
+  //***************************************************************************************************************************************
+  // Sección 1: impresión de imágenes de menú principal
+  //***************************************************************************************************************************************
   if(banderamenu == 0)
-  {
+  
     if (bandera_musica1 == 1){
       //Envia 3 a musica
       musica = 3;
@@ -327,14 +328,16 @@ void loop() {
     aceptar = 0;
     aceptar2 = 0;
     bandera = 0;
-     
     banderamenu = 1;
   }
-//*****************************************************************************************************************************
-  while (banderamenu == 1){
-  
+
+  //***************************************************************************************************************************************
+  // Sección 2: Elección de opciones del menú principal
+  //***************************************************************************************************************************************
+  while (banderamenu == 1){ 
+    
     botones();
-     
+    
     if(contador == 1 & bandera == 1)
     {    
       FillRect(110, 126, 8, 50, 0x0000);
@@ -369,7 +372,7 @@ void loop() {
   
     botones();
     
-    if(contador == 4)
+    if(contador == 4) // Limite de solo 3 opciones
     {
       contador = 1;
     }
@@ -380,7 +383,7 @@ void loop() {
 
     botones();
     
-    if(contador == 1 & aceptar == 1)
+    if(contador == 1 & aceptar == 1) // Seleccionó opción de un jugador
     {
       tone(buzzerPin, 659, 190);
       if (bandera_musica1 == 1){
@@ -429,18 +432,18 @@ void loop() {
       LimiteNaveIzquierda = false;
       
       recibido = 0;
-      Serial5.write(recibido);
+      Serial5.write(recibido); 
       
       contador = 1;
       aceptar = 0;
       aceptar2 = 0;
       
-      banderamenu = 3;
+      banderamenu = 3; // pasar al loop de un jugador
     }
     
     botones();
     
-    if(contador == 2 & aceptar == 1)
+    if(contador == 2 & aceptar == 1) // Seleccionó opción de dos jugadores
     {
       tone(buzzerPin, 659, 190);
       if (bandera_musica1 == 1){
@@ -512,18 +515,17 @@ void loop() {
       aceptar = 0;
       aceptar2 = 0;
       
-      banderamenu = 4;
+      banderamenu = 4; // pasar a loop de dos jugadores
     }
     
     botones();
     
-    if(contador == 3 & aceptar == 1)
+    if(contador == 3 & aceptar == 1) // Seleccionó opción de configuraciones
     {
       tone(buzzerPin, 659, 190);
       //Envia 0 a musica
       musica = 0;
       Serial2.write(musica);
-      //********************
       
       recibido = 1;
       Serial5.write(recibido);
@@ -537,38 +539,38 @@ void loop() {
       Serial5.write(recibido);
       
       if (bandera_musica1 == 1){
-        //activa bandera musica 1
+        //activa musica 1
         Rect(32, 82, 96, 27, 0xFFC0);
         Rect(33, 83, 94, 25, 0xFFC0);
         
-        //limpia bandera musica 2
+        //limpia musica 2
         Rect(192, 82, 96, 27, 0x0000);
         Rect(193, 83, 94, 25, 0x0000);
       }
       if (bandera_musica2 == 1){
-        //activa bandera musica 2
+        //activa musica 2
         Rect(192, 82, 96, 27, 0xFFC0);
         Rect(193, 83, 94, 25, 0xFFC0);
         
-        //limpia bandera musica 1
+        //limpia musica 1
         Rect(32, 82, 96, 27, 0x0000);
         Rect(33, 83, 94, 25, 0x0000);
       }
       if (modo_clasico == 1){
-        //activa bandera modo clasico
+        //activa modo clasico
         Rect(32, 115, 96, 27, 0xFFC0);
         Rect(33, 116, 94, 25, 0xFFC0);
         
-        //limpia bandera modo secundario
+        //limpia modo secundario
         Rect(192, 115, 96, 27, 0x0000);
         Rect(193, 116, 94, 25, 0x0000);
       }
       if (modo_secundario== 1){
-        //activa bandera modo secundario
+        //activa modo secundario
         Rect(192, 115, 96, 27, 0xFFC0);
         Rect(193, 116, 94, 25, 0xFFC0);
         
-        //limpia bandera modo clasico
+        //limpia modo clasico
         Rect(32, 115, 96, 27, 0x0000);
         Rect(33, 116, 94, 25, 0x0000);
       }      
@@ -576,17 +578,19 @@ void loop() {
       contador = 1;
       aceptar = 0;
       aceptar2 = 0;
-      
-      banderamenu = 2;
+      banderamenu = 2; // Pasar al loop de las configuraciones
     }
     
     delay(10);
   }
-//*****************************************************************************************************************************
-  while (banderamenu == 2){
+
+  //***************************************************************************************************************************************
+  // Sección 3: Configuraciones de musica y modos de juego
+  //***************************************************************************************************************************************
+  while (banderamenu == 2){ 
     botones();
       
-    if(contador == 1 & bandera == 1)
+    if(contador == 1 & bandera == 1) // Imprimir flechita en opcion seleccionada y borrar en otras opciones
     {
       flechita(180,93,0x00);
       flechita(20,120,0x00);
@@ -656,7 +660,7 @@ void loop() {
     
     botones();
     
-    if(contador == 6)
+    if(contador == 6) // Limite de solo 5 opcciones
     {
       contador = 1;
     }
@@ -667,7 +671,7 @@ void loop() {
 
     botones();
     
-    if(contador == 1 & aceptar == 1)
+    if(contador == 1 & aceptar == 1) // Selecciona musica 1
     {
       //activa bandera musica 1
       Rect(32, 82, 96, 27, 0xFFC0);
@@ -686,7 +690,7 @@ void loop() {
     
     botones();
     
-    if(contador == 2 & aceptar == 1)
+    if(contador == 2 & aceptar == 1) // Selecciona modo clasico
     {
       //activa bandera modo clasico
       Rect(32, 115, 96, 27, 0xFFC0);
@@ -705,7 +709,7 @@ void loop() {
     
     botones();
     
-    if(contador == 3 & aceptar == 1)
+    if(contador == 3 & aceptar == 1) // Selecciona musica 2
     {
       //activa bandera musica 2
       Rect(192, 82, 96, 27, 0xFFC0);
@@ -724,7 +728,7 @@ void loop() {
     
     botones();
     
-    if(contador == 4 & aceptar == 1)
+    if(contador == 4 & aceptar == 1) // Selecciona modo secundario
     {
       //activa bandera modo secundario
       Rect(192, 115, 96, 27, 0xFFC0);
@@ -743,7 +747,7 @@ void loop() {
     
     botones();
     
-    if(contador == 5 & aceptar == 1)
+    if(contador == 5 & aceptar == 1) // Regresa a menú principal
     {
       tone(buzzerPin, 659, 190);
       contador = 0;
@@ -754,46 +758,42 @@ void loop() {
     
     delay(10);
   }
-//*****************************************************************************************************************************  
-//*****************************************************************************************************************************
-// CORAZON DEL JUEGO
-//*****************************************************************************************************************************
-//*****************************************************************************************************************************
+
+  //***************************************************************************************************************************************
+  // Sección 4: Ejecución del juego en modo de un jugador
+  //***************************************************************************************************************************************
   while (banderamenu == 3){
-  unsigned long currentMillis = millis();
-  String text1 = "MUNICION =   /40";
-  LCD_Print(text1, 170, 10, 1, 0xD0A2, 0x0000);
-  texto_municion = String(municion);
-  LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
-      
-  // actualización de frame cada 42ms = 24fps
-  //if (currentMillis - previousMillis >= interval) {
-    //previousMillis = currentMillis;
-      
-    botones();
     
+    unsigned long currentMillis = millis();
+    String text1 = "MUNICION =   /40";
+    LCD_Print(text1, 170, 10, 1, 0xD0A2, 0x0000);
+    texto_municion = String(municion);
+    LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
+
+    botones();
     texto_municion = String(municion);
     LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
     
+    // Movimiento a la izquierda de la nave
     if(izquierda == true & bandera == 1)
     {
       LimiteNaveDerecha = false;
-      if (LimiteNaveIzquierda == false) { // movimiento de rectángul
+      if (LimiteNaveIzquierda == false) {
         NaveGalaga1_x-= 4;
         if (NaveGalaga1_x <= 5) {
           LimiteNaveIzquierda = true;
         }
       }    
-      FillRect(NaveGalaga1_x + NaveGalaga1_width, NaveGalaga1_y, 4, NaveGalaga1_height, 0x0000);      
+      FillRect(NaveGalaga1_x + NaveGalaga1_width, NaveGalaga1_y, 4, NaveGalaga1_height, 0x0000); // Borrar rastro  
       bandera = 0;
       izquierda = false;
     }  
     
     botones();
-    
     texto_municion = String(municion);
     LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Movimiento a la derecha de la nave
     if(derecha == true & bandera == 1)
     {
       LimiteNaveIzquierda = false;
@@ -803,58 +803,56 @@ void loop() {
           LimiteNaveDerecha = true;
         }
       }
-      FillRect(NaveGalaga1_x - 4, NaveGalaga1_y, 4, NaveGalaga1_height, 0x0000);
+      FillRect(NaveGalaga1_x - 4, NaveGalaga1_y, 4, NaveGalaga1_height, 0x0000);  // Borrar rastro
       bandera = 0;
       derecha = false;
     }
     
     botones();
-    
     texto_municion = String(municion);
     LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
-    
-    texto_municion = String(municion);
-    LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Escoger nave segun modo de juego
     if (modo_clasico == 1){
         LCD_Bitmap(NaveGalaga1_x, NaveGalaga1_y, NaveGalaga1_width, NaveGalaga1_height, NaveGalaga1);
       }
     if (modo_secundario== 1){
         LCD_Bitmap(NaveGalaga1_x, NaveGalaga1_y, NaveGalaga1_width, NaveGalaga1_height, NaveGalaga3);
       }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
+
+    // Impresión de 3 tipos de enemigos
     for (int i = 0; i < 5; i++){
       LCD_Sprite(enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i], enemigo1, 5, enemigo_index[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 5; i < 10; i++){
       LCD_Sprite(enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i], enemigo2, 3, enemigo_index[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 10; i < 15; i++){
       LCD_Sprite(enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i], enemigo3, 3, enemigo_index[i], 0, 0);
     }
-//***********************************************************************************************************************    
-    if (enemiesMove1) { // movimiento de enemigos
-      for (int i = 0; i < 5; i++){
+
+    // Movimiento de grupo 1 de enemigos
+    if (enemiesMove1) {
+      for (int i = 0; i < 5; i++){ // Borrar rastro
         FillRect(enemigo_x[i] + enemigo_width[i], enemigo_y[i], 2, enemigo_height[i], 0x0000);
         enemigo_x[i]-= 2;
       }
-      if (enemigo_x[0] <= 5) {
+      if (enemigo_x[0] <= 5) { // Limite de pantala
         enemiesMove1 = false;
       }
     }  
     else {
-      for (int i = 0; i < 5; i++){
+      for (int i = 0; i < 5; i++){ // Borrar rastro
         FillRect(enemigo_x[i] - 2, enemigo_y[i], 2, enemigo_height[i], 0x0000);
         enemigo_x[i]+= 2;
       }
-      if (enemigo_x[4] >= 288) {
+      if (enemigo_x[4] >= 288) { // Limite de pantalla
         enemiesMove1 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
-    if (enemiesMove2) { // movimiento de enemigos
+
+    // Movimiento de grupo 2 de enemigos
+    if (enemiesMove2) { 
       for (int i = 5; i < 10; i++){
         FillRect(enemigo_x[i] - 8, enemigo_y[i], 8, enemigo_height[i], 0x0000);
         enemigo_x[i]+= 8;
@@ -872,8 +870,9 @@ void loop() {
         enemiesMove2 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
-    if (enemiesMove3) { // movimiento de enemigos
+
+    // Movimiento de grupo 3 de enemigos
+    if (enemiesMove3) {
       for (int i = 10; i < 15; i++){
         FillRect(enemigo_x[i] + enemigo_width[i], enemigo_y[i], 5, enemigo_height[i], 0x0000);
         enemigo_x[i]-= 5;
@@ -891,9 +890,9 @@ void loop() {
         enemiesMove3 = true;
       }
     }
-//***********************************************************************************************************************     
+
+    // Simulacion de movimiento de enemigos en el mismo lugar
     contador_enemigos+=1;
-    
     if (contador_enemigos == 10)
     {
       for (int i = 5; i < 15; i++){
@@ -922,11 +921,9 @@ void loop() {
       }
       contador_enemigos = 0;
     }
-//***********************************************************************************************************************
-// DISPARO
-//***********************************************************************************************************************           
+
+    // Leer si hubo disparo
     botones();
-    
     texto_municion = String(municion);
     LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
 
@@ -934,16 +931,9 @@ void loop() {
       bandera_disparo = 1;
       aceptar = 0;
     }
-    if (bandera_disparo == 1){ 
-      if (disparo_completado == true){
-        tone(buzzerPin, 659, 90);
-        disparo_x = NaveGalaga1_x;
-        disparo_completado = false;
-      }
-      LCD_Bitmap(disparo_x + 14, 190 - disparo_y, 3, 8, DisparoNave);
-      FillRect(disparo_x + 14, 190 - disparo_y + 8, 3, 8, 0x0000);
-      disparo_y+=8;
-      
+
+    // Hubo disparo
+    if (bandera_disparo == 1){
       if (disparo_y >= 163){
         municion-=1;
         FillRect(disparo_x + 14, 27, 3, 16, 0x0000);
@@ -951,24 +941,30 @@ void loop() {
         disparo_completado = true;
         bandera_disparo = 0;
       }
+      if (disparo_completado == true){ 
+        tone(buzzerPin, 659, 90);
+        disparo_x = NaveGalaga1_x;
+        disparo_completado = false;
+      }
+      
+      LCD_Bitmap(disparo_x + 14, 190 - disparo_y, 3, 8, DisparoNave);
+      FillRect(disparo_x + 14, 190 - disparo_y + 8, 3, 8, 0x0000); // Borrar rastro de disparo
+      disparo_y+=8;
     }
-//***********************************************************************************************************************
-// CONDICION DE COLISION
-//***********************************************************************************************************************
-    botones();
     
+    botones();
     texto_municion = String(municion);
     LCD_Print(texto_municion, 255, 10, 1, 0xD0A2, 0x0000);
     
+    // Enemigos que se mueren con un disparo
     for (int i = 5; i<15; i++){
       if (enemigo_index[i] != 2){
         collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i]); // detección de colisión
-        if (collision) { // se reemplaza el color al colisionar
+        
+        if (collision) { // Animacion de explosión
           enemigo_index[i] = 2;
-          
           Victoria+=1;
           municion-=1;
-        
           FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
           LCD_Sprite(enemigo_x[i] - 10, enemigo_y[i] - 11, 32, 32, explosion1, 6, 0, 0, 0);
           LCD_Sprite(enemigo_x[i] - 10, enemigo_y[i] - 11, 32, 32, explosion1, 6, 1, 0, 0);
@@ -976,23 +972,22 @@ void loop() {
           LCD_Sprite(enemigo_x[i] - 10, enemigo_y[i] - 11, 32, 32, explosion1, 6, 3, 0, 0);
           LCD_Sprite(enemigo_x[i] - 10, enemigo_y[i] - 11, 32, 32, explosion1, 6, 4, 0, 0);
           LCD_Sprite(enemigo_x[i] - 10, enemigo_y[i] - 11, 32, 32, explosion1, 6, 5, 0, 0);
-          
           disparo_y = 8;
           disparo_completado = true;
           bandera_disparo = 0;
         }
       }
     }
+
+    // Enemigos que se mueren con dos disparos
     for (int i = 0; i<5; i++){
       if (enemigo_hit[i] == 0){
         if (enemigo_index[i] != 4){
           collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i]); // detección de colisión
-          if (collision) { // se reemplaza el color al colisionar
+          if (collision) {
             enemigo_hit[i] = 1;
             enemigo_index[i] = 2;
-            
             municion-=1;
-        
             FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
             disparo_y = 8;
             disparo_completado = true;
@@ -1003,12 +998,11 @@ void loop() {
       if (enemigo_hit[i] == 1){
         if (enemigo_index[i] != 4){
           collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x[i], enemigo_y[i], enemigo_width[i], enemigo_height[i]); // detección de colisión
-          if (collision) { // se reemplaza el color al colisionar
+          
+          if (collision) { // Animacion de explosión
             enemigo_index[i] = 4;
-            
             Victoria+=1;            
             municion-=1;
-            
             FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
             LCD_Sprite(enemigo_x[i] - 9, enemigo_y[i] - 8, 32, 32, explosion1, 6, 0, 0, 0);
             LCD_Sprite(enemigo_x[i] - 9, enemigo_y[i] - 8, 32, 32, explosion1, 6, 1, 0, 0);
@@ -1016,8 +1010,6 @@ void loop() {
             LCD_Sprite(enemigo_x[i] - 9, enemigo_y[i] - 8, 32, 32, explosion1, 6, 3, 0, 0);
             LCD_Sprite(enemigo_x[i] - 9, enemigo_y[i] - 8, 32, 32, explosion1, 6, 4, 0, 0);
             LCD_Sprite(enemigo_x[i] - 9, enemigo_y[i] - 8, 32, 32, explosion1, 6, 5, 0, 0);
-
-            
             disparo_y = 8;
             disparo_completado = true;
             bandera_disparo = 0;
@@ -1026,17 +1018,14 @@ void loop() {
       }
     }
 
-//***********************************************************************************************************************
-// CONDICION DE DERROTA
-//***********************************************************************************************************************
     botones();
-    
+
+    // Game over
     if(municion == 0 && Victoria < 15)
     {
       //Envia 1 a musica
       musica = 1;
       Serial2.write(musica);
-      //********************
       
       recibido = 1;
       Serial5.write(recibido); 
@@ -1049,27 +1038,20 @@ void loop() {
 
       Victoria = 0;
       Ganador = 1;  
-      
       contador = 1;
       aceptar = 0;
       aceptar2 = 0; 
-      
       banderamenu = 5;
     }
-    
-//***********************************************************************************************************************
-// CONDICION DE VICTORIA
-//***********************************************************************************************************************    
+
     botones();
-    
-    Serial.println(Victoria);
-    
+
+    // Victoria
     if(Victoria == 15)
     {
       //Envia 2 a musica
       musica = 2;
       Serial2.write(musica);  
-      //********************
       
       recibido = 1;
       Serial5.write(recibido);
@@ -1082,44 +1064,34 @@ void loop() {
 
       Victoria = 0;
       Ganador = 3;
-      
       contador = 1;
       aceptar = 0;
       aceptar2 = 0; 
-      
       banderamenu = 5;
     }
     
     botones();
-    
     delay(10);
-  //}
-}
-//*****************************************************************************************************************************  
-//*****************************************************************************************************************************
-// JUGADOR 1
-//*****************************************************************************************************************************
-//*****************************************************************************************************************************
-while (banderamenu == 4){
-  unsigned long currentMillis = millis();
-  
+  }
 
-  String text1 = "MUNICION =   /15";
-  LCD_Print(text1, 20, 10, 1, 0xD0A2, 0x0000);
-  texto_municion = String(municion1);
-  LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-      
-  // actualización de frame cada 42ms = 24fps
-  //if (currentMillis - previousMillis >= interval) {
-    //previousMillis = currentMillis;
-      
-    botones();
-    
-    texto_municion = String(municion1);
-    LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-    
-    if(izquierda == true & bandera == 1)
-    {
+  //***************************************************************************************************************************************
+  // Sección 5: Ejecución del juego en modo de dos jugadores
+  //***************************************************************************************************************************************
+  while (banderamenu == 4){ 
+
+   // ******************* JUGADOR 1 *******************
+   unsigned long currentMillis = millis();
+   String text1 = "MUNICION =   /15";
+   LCD_Print(text1, 20, 10, 1, 0xD0A2, 0x0000);
+   texto_municion = String(municion1);
+   LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
+
+   botones();
+   texto_municion = String(municion1);
+   LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
+
+   // Movimiento a la izquierda de la nave
+   if(izquierda == true & bandera == 1){
       LimiteNaveDerecha = false;
       if (LimiteNaveIzquierda == false) { // movimiento de rectángul
         NaveGalaga1_x-= 4;
@@ -1133,10 +1105,10 @@ while (banderamenu == 4){
     }  
     
     botones();
-    
     texto_municion = String(municion1);
     LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Movimiento a la derecha de la nave
     if(derecha == true & bandera == 1)
     {
       LimiteNaveIzquierda = false;
@@ -1152,38 +1124,35 @@ while (banderamenu == 4){
     }
     
     botones();
-    
     texto_municion = String(municion1);
     LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-    
-    texto_municion = String(municion1);
-    LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Escoger nave segun modo de juego
     if (modo_clasico == 1){
         LCD_Bitmap(NaveGalaga1_x, NaveGalaga1_y, NaveGalaga1_width, NaveGalaga1_height, NaveGalaga1);
       }
     if (modo_secundario== 1){
         LCD_Bitmap(NaveGalaga1_x, NaveGalaga1_y, NaveGalaga1_width, NaveGalaga1_height, NaveGalaga3);
       }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
-    for (int i = 0; i < 2; i++){
+
+   // Impresión de 3 tipos de enemigos
+   for (int i = 0; i < 2; i++){
       LCD_Sprite(enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i], enemigo1, 5, enemigo_index1[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 2; i < 4; i++){
       LCD_Sprite(enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i], enemigo2, 3, enemigo_index1[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 4; i < 6; i++){
       LCD_Sprite(enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i], enemigo3, 3, enemigo_index1[i], 0, 0);
     }
-//***********************************************************************************************************************    
+
+    // Movimiento de grupo 1 de enemigos
     if (enemiesMove1) { // movimiento de enemigos
-      for (int i = 0; i < 2; i++){
+      for (int i = 0; i < 2; i++){ // Borrar rastro
         FillRect(enemigo_x1[i] + enemigo_width1[i], enemigo_y1[i], 2, enemigo_height1[i], 0x0000);
         enemigo_x1[i]-= 2;
       }
-      if (enemigo_x1[0] <= 5) {
+      if (enemigo_x1[0] <= 5) { // Limite de pantalla
         enemiesMove1 = false;
       }
     }  
@@ -1196,8 +1165,9 @@ while (banderamenu == 4){
         enemiesMove1 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
-    if (enemiesMove2) { // movimiento de enemigos
+
+    // Movimiento de grupo 2 de enemigos
+    if (enemiesMove2) {
       for (int i = 2; i < 4; i++){
         FillRect(enemigo_x1[i] - 8, enemigo_y1[i], 8, enemigo_height1[i], 0x0000);
         enemigo_x1[i]+= 8;
@@ -1215,8 +1185,9 @@ while (banderamenu == 4){
         enemiesMove2 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
-    if (enemiesMove3) { // movimiento de enemigos
+
+    // Movimiento de grupo 1 de enemigos
+    if (enemiesMove3) {
       for (int i = 4; i < 6; i++){
         FillRect(enemigo_x1[i] + enemigo_width1[i], enemigo_y1[i], 5, enemigo_height1[i], 0x0000);
         enemigo_x1[i]-= 5;
@@ -1234,9 +1205,9 @@ while (banderamenu == 4){
         enemiesMove3 = true;
       }
     }
-//***********************************************************************************************************************     
+
+    // Simulacion de movimiento de enemigos en el mismo lugar
     contador_enemigos+=1;
-    
     if (contador_enemigos == 10)
     {
       for (int i = 2; i < 6; i++){
@@ -1265,11 +1236,9 @@ while (banderamenu == 4){
       }
       contador_enemigos = 0;
     }
-//***********************************************************************************************************************
-// DISPARO
-//***********************************************************************************************************************           
+
+    // Leer si hubo disparo
     botones();
-    
     texto_municion = String(municion1);
     LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
 
@@ -1277,6 +1246,8 @@ while (banderamenu == 4){
       bandera_disparo = 1;
       aceptar = 0;
     }
+
+    // Hubo disparo
     if (bandera_disparo == 1){ 
       if (disparo_completado == true){
         tone(buzzerPin, 659, 90);
@@ -1295,23 +1266,20 @@ while (banderamenu == 4){
         bandera_disparo = 0;
       }
     }
-//***********************************************************************************************************************
-// CONDICION DE COLISION
-//***********************************************************************************************************************
+
     botones();
-    
     texto_municion = String(municion1);
     LCD_Print(texto_municion, 105, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Enemigos que se mueren con un disparo
     for (int i = 2; i<6; i++){
       if (enemigo_index1[i] != 2){
         collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i]); // detección de colisión
-        if (collision) { // se reemplaza el color al colisionar
-          enemigo_index1[i] = 2;
-          
+        
+        if (collision) { // Animacion de explosion
+          enemigo_index1[i] = 2;   
           Victoria+=1;
           municion1-=1;
-        
           FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
           LCD_Sprite(enemigo_x1[i] - 10, enemigo_y1[i] - 11, 32, 32, explosion1, 6, 0, 0, 0);
           LCD_Sprite(enemigo_x1[i] - 10, enemigo_y1[i] - 11, 32, 32, explosion1, 6, 1, 0, 0);
@@ -1319,23 +1287,22 @@ while (banderamenu == 4){
           LCD_Sprite(enemigo_x1[i] - 10, enemigo_y1[i] - 11, 32, 32, explosion1, 6, 3, 0, 0);
           LCD_Sprite(enemigo_x1[i] - 10, enemigo_y1[i] - 11, 32, 32, explosion1, 6, 4, 0, 0);
           LCD_Sprite(enemigo_x1[i] - 10, enemigo_y1[i] - 11, 32, 32, explosion1, 6, 5, 0, 0);
-          
           disparo_y = 8;
           disparo_completado = true;
           bandera_disparo = 0;
         }
       }
     }
+
+    // Enemigos que se mueren con dos disparos
     for (int i = 0; i<2; i++){
       if (enemigo_hit1[i] == 0){
         if (enemigo_index1[i] != 4){
           collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i]); // detección de colisión
-          if (collision) { // se reemplaza el color al colisionar
+          if (collision) {
             enemigo_hit1[i] = 1;
             enemigo_index1[i] = 2;
-            
             municion1-=1;
-        
             FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
             disparo_y = 8;
             disparo_completado = true;
@@ -1346,12 +1313,11 @@ while (banderamenu == 4){
       if (enemigo_hit1[i] == 1){
         if (enemigo_index1[i] != 4){
           collision = Collision((disparo_x + 14), (190 - disparo_y), 3, 8, enemigo_x1[i], enemigo_y1[i], enemigo_width1[i], enemigo_height1[i]); // detección de colisión
-          if (collision) { // se reemplaza el color al colisionar
+          
+          if (collision) { // Animación de explosión
             enemigo_index1[i] = 4;
-
             Victoria+=1;            
             municion1-=1;
-            
             FillRect(disparo_x + 14, (190 - disparo_y), 3, 16, 0x0000);
             LCD_Sprite(enemigo_x1[i] - 9, enemigo_y1[i] - 8, 32, 32, explosion1, 6, 0, 0, 0);
             LCD_Sprite(enemigo_x1[i] - 9, enemigo_y1[i] - 8, 32, 32, explosion1, 6, 1, 0, 0);
@@ -1359,8 +1325,6 @@ while (banderamenu == 4){
             LCD_Sprite(enemigo_x1[i] - 9, enemigo_y1[i] - 8, 32, 32, explosion1, 6, 3, 0, 0);
             LCD_Sprite(enemigo_x1[i] - 9, enemigo_y1[i] - 8, 32, 32, explosion1, 6, 4, 0, 0);
             LCD_Sprite(enemigo_x1[i] - 9, enemigo_y1[i] - 8, 32, 32, explosion1, 6, 5, 0, 0);
-
-            
             disparo_y = 8;
             disparo_completado = true;
             bandera_disparo = 0;
@@ -1369,21 +1333,17 @@ while (banderamenu == 4){
       }
     }
 
-//***********************************************************************************************************************
-//***********************************************************************************************************************
-// JUGADOR 2
-//***********************************************************************************************************************
-//***********************************************************************************************************************
+    // ******************* JUGADOR 2 *******************
     String text2 = "MUNICION =   /15";
     LCD_Print(text2, 170, 10, 1, 0xD0A2, 0x0000);
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
       
     botones();
-    
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Movimiento a la izquierda de la nave
     if(izquierda2 == true & bandera2 == 1)
     {
       LimiteNaveDerecha_2 = false;
@@ -1399,10 +1359,10 @@ while (banderamenu == 4){
     }  
     
     botones();
-    
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
 
+    // Movimiento a la derecha de la nave
     if(derecha2 == true & bandera2 == 1)
     {
       LimiteNaveIzquierda_2 = false;
@@ -1418,30 +1378,30 @@ while (banderamenu == 4){
     }
     
     botones();
-    
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Escoger nave segun modo de juego
     if (modo_clasico == 1){
         LCD_Bitmap(NaveGalaga2_x, NaveGalaga2_y, NaveGalaga2_width, NaveGalaga2_height, NaveGalaga2);
       }
     if (modo_secundario== 1){
         LCD_Bitmap(NaveGalaga2_x, NaveGalaga2_y, NaveGalaga2_width, NaveGalaga2_height, NaveGalaga4);
       }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
+
+    // Impresión de 3 tipos de enemigos   
     for (int i = 0; i < 2; i++){
       LCD_Sprite(enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i], enemigo1, 5, enemigo_index2[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 2; i < 4; i++){
       LCD_Sprite(enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i], enemigo2, 3, enemigo_index2[i], 0, 0);
     }
-//**********************************************PRIMER SET DE ENEMIGOS***************************************************
     for (int i = 4; i < 6; i++){
       LCD_Sprite(enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i], enemigo3, 3, enemigo_index2[i], 0, 0);
     }
-//***********************************************************************************************************************    
-    if (enemiesMove1_2) { // movimiento de enemigos
+
+    // Movimiento de grupo 1 de enemigos     
+    if (enemiesMove1_2) {
       for (int i = 0; i < 2; i++){
         FillRect(enemigo_x2[i] + enemigo_width2[i], enemigo_y2[i], 2, enemigo_height2[i], 0x0000);
         enemigo_x2[i]-= 2;
@@ -1459,8 +1419,9 @@ while (banderamenu == 4){
         enemiesMove1_2 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
-    if (enemiesMove2_2) { // movimiento de enemigos
+
+    // Movimiento de grupo 2 de enemigos
+    if (enemiesMove2_2) {
       for (int i = 2; i < 4; i++){
         FillRect(enemigo_x2[i] - 8, enemigo_y2[i], 8, enemigo_height2[i], 0x0000);
         enemigo_x2[i]+= 8;
@@ -1478,7 +1439,8 @@ while (banderamenu == 4){
         enemiesMove2_2 = true;
       }
     }
-//------------------------------------------------------------------------------------------------    
+
+    // Movimiento de grupo 3 de enemigos
     if (enemiesMove3_2) { // movimiento de enemigos
       for (int i = 4; i < 6; i++){
         FillRect(enemigo_x2[i] + enemigo_width2[i], enemigo_y2[i], 5, enemigo_height2[i], 0x0000);
@@ -1497,9 +1459,9 @@ while (banderamenu == 4){
         enemiesMove3_2 = true;
       }
     }
-//***********************************************************************************************************************     
+
+    // Simulacion de movimiento de enemigos en el mismo lugar
     contador_enemigos2+=1;
-    
     if (contador_enemigos2 == 10)
     {
       for (int i = 2; i < 6; i++){
@@ -1528,11 +1490,9 @@ while (banderamenu == 4){
       }
       contador_enemigos2 = 0;
     }
-//***********************************************************************************************************************
-// DISPARO
-//***********************************************************************************************************************           
+
+   // Leer si hubo disparo
     botones();
-    
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
 
@@ -1540,6 +1500,8 @@ while (banderamenu == 4){
       bandera_disparo2 = 1;
       aceptar2 = 0;
     }
+
+    // Hubo disparo
     if (bandera_disparo2 == 1){ 
       if (disparo_completado2 == true){
         tone(buzzerPin, 659, 90);
@@ -1558,23 +1520,20 @@ while (banderamenu == 4){
         bandera_disparo2 = 0;
       }
     }
-//***********************************************************************************************************************
-// CONDICION DE COLISION
-//***********************************************************************************************************************
+
     botones();
-    
     texto_municion2 = String(municion2);
     LCD_Print(texto_municion2, 255, 10, 1, 0xD0A2, 0x0000);
-    
+
+    // Enemigos que se mueren con un disparo
     for (int i = 2; i<6; i++){
       if (enemigo_index2[i] != 2){
         collision2 = Collision((disparo_x2 + 14), (190 - disparo_y2), 3, 8, enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i]); // detección de colisión
-        if (collision2) { // se reemplaza el color al colisionar
+        
+        if (collision2) { // Animacion de explosión
           enemigo_index2[i] = 2;
-          
           Victoria2+=1;
           municion2-=1;
-        
           FillRect(disparo_x2 + 14, (190 - disparo_y2), 3, 16, 0x0000);
           LCD_Sprite(enemigo_x2[i] - 10, enemigo_y2[i] - 11, 32, 32, explosion1, 6, 0, 0, 0);
           LCD_Sprite(enemigo_x2[i] - 10, enemigo_y2[i] - 11, 32, 32, explosion1, 6, 1, 0, 0);
@@ -1582,23 +1541,22 @@ while (banderamenu == 4){
           LCD_Sprite(enemigo_x2[i] - 10, enemigo_y2[i] - 11, 32, 32, explosion1, 6, 3, 0, 0);
           LCD_Sprite(enemigo_x2[i] - 10, enemigo_y2[i] - 11, 32, 32, explosion1, 6, 4, 0, 0);
           LCD_Sprite(enemigo_x2[i] - 10, enemigo_y2[i] - 11, 32, 32, explosion1, 6, 5, 0, 0);
-          
           disparo_y2 = 8;
           disparo_completado2 = true;
           bandera_disparo2 = 0;
         }
       }
     }
+
+    // Enemigos que se mueren con dos disparos
     for (int i = 0; i<2; i++){
       if (enemigo_hit2[i] == 0){
         if (enemigo_index2[i] != 4){
           collision2 = Collision((disparo_x2 + 14), (190 - disparo_y2), 3, 8, enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i]); // detección de colisión
-          if (collision2) { // se reemplaza el color al colisionar
+          if (collision2) {
             enemigo_hit2[i] = 1;
             enemigo_index2[i] = 2;
-            
             municion2-=1;
-        
             FillRect(disparo_x2 + 14, (190 - disparo_y2), 3, 16, 0x0000);
             disparo_y2 = 8;
             disparo_completado2 = true;
@@ -1609,12 +1567,11 @@ while (banderamenu == 4){
       if (enemigo_hit2[i] == 1){
         if (enemigo_index2[i] != 4){
           collision2 = Collision((disparo_x2 + 14), (190 - disparo_y2), 3, 8, enemigo_x2[i], enemigo_y2[i], enemigo_width2[i], enemigo_height2[i]); // detección de colisión
-          if (collision2) { // se reemplaza el color al colisionar
+          
+          if (collision2) { // Animacion de explosión
             enemigo_index2[i] = 4;
-
             Victoria2+=1;            
             municion2-=1;
-            
             FillRect(disparo_x2 + 14, (190 - disparo_y2), 3, 16, 0x0000);
             LCD_Sprite(enemigo_x2[i] - 9, enemigo_y2[i] - 8, 32, 32, explosion1, 6, 0, 0, 0);
             LCD_Sprite(enemigo_x2[i] - 9, enemigo_y2[i] - 8, 32, 32, explosion1, 6, 1, 0, 0);
@@ -1623,7 +1580,6 @@ while (banderamenu == 4){
             LCD_Sprite(enemigo_x2[i] - 9, enemigo_y2[i] - 8, 32, 32, explosion1, 6, 4, 0, 0);
             LCD_Sprite(enemigo_x2[i] - 9, enemigo_y2[i] - 8, 32, 32, explosion1, 6, 5, 0, 0);
 
-            
             disparo_y2 = 8;
             disparo_completado2 = true;
             bandera_disparo2 = 0;
@@ -1632,11 +1588,9 @@ while (banderamenu == 4){
       }
     }
 
-//***********************************************************************************************************************
-// CONDICION DE DERROTA
-//***********************************************************************************************************************
     botones();
-    
+
+    // Municiones se acaban
     if (municion1 < 1){
       municion1 = 0;
       recibido = 3;
@@ -1648,13 +1602,13 @@ while (banderamenu == 4){
       recibido = 2;
       Serial5.write(recibido); 
     }
-    
+
+    // Game over
     if((municion1 == 0 && Victoria < 6)&&(municion2 == 0 && Victoria2 < 6))
     {
       //Envia 1 a musica
       musica = 1;
       Serial2.write(musica);
-      //********************
       
       recibido = 1;
       Serial5.write(recibido); 
@@ -1667,35 +1621,28 @@ while (banderamenu == 4){
 
       Victoria = 0;
       Victoria2 = 0;
-      
       Ganador = 0;
       
       recibido = 5;
       Serial5.write(recibido); 
-
       delay(10);
-      
       recibido = 4;
       Serial5.write(recibido); 
       
       contador = 1;
       aceptar = 0;
       aceptar2 = 0;  
-      
       banderamenu = 5;
     }
 
-//***********************************************************************************************************************
-// CONDICION DE VICTORIA 1
-//***********************************************************************************************************************    
     botones();
-    
+
+    // Victoria 1
     if(Victoria == 6)
     {
       //Envia 2 a musica
       musica = 2;
       Serial2.write(musica);  
-      //********************
       
       recibido = 1;
       Serial5.write(recibido);
@@ -1708,36 +1655,27 @@ while (banderamenu == 4){
 
       Victoria = 0;
       Victoria2 = 0;
-      
-      recibido = 4;
-      Serial5.write(recibido);
+      Ganador = 1; 
       
       recibido = 5;
       Serial5.write(recibido);
-      Ganador = 1; 
-      
+      recibido = 4;
+      Serial5.write(recibido);
+
       contador = 1;
       aceptar = 0;
       aceptar2 = 0;
-      
       banderamenu = 5;
     }
     
     botones();
     
-    delay(10);
-        
-//***********************************************************************************************************************
-// CONDICION DE VICTORIA 2
-//***********************************************************************************************************************    
-    botones();
-    
+    // Victoria 2
     if(Victoria2 == 6)
     {
       //Envia 2 a musica
       musica = 2;
       Serial2.write(musica);  
-      //********************
       
       recibido = 1;
       Serial5.write(recibido);
@@ -1750,31 +1688,27 @@ while (banderamenu == 4){
 
       Victoria = 0;
       Victoria2 = 0;
-      
-      recibido = 4;
-      Serial5.write(recibido);
+      Ganador = 2;
       
       recibido = 5;
       Serial5.write(recibido);
-       
-      Ganador = 2;
-      
+      recibido = 4;
+      Serial5.write(recibido);
+ 
       contador = 1;
       aceptar = 0;
       aceptar2 = 0;
-      
       banderamenu = 5;
     }
     
-    botones();
-    
     delay(10);
-  //}
- }
-//*****************************************************************************************************************************
-//*****************************************************************************************************************************
-//*****************************************************************************************************************************
-while (banderamenu == 5){
+  
+  }
+
+  //***************************************************************************************************************************************
+  // Sección 6: Esperar enter final
+  //***************************************************************************************************************************************
+  while (banderamenu == 5){ 
     
     botones();
     
@@ -1814,15 +1748,15 @@ while (banderamenu == 5){
       aceptar = 0;
       aceptar2 = 0;
       banderamenu = 0;
-    }
-    
+    } 
   }
 }
 
 //***************************************************************************************************************************************
+//***************************************************************************************************************************************
 // Funciones
 //***************************************************************************************************************************************
-
+//***************************************************************************************************************************************
 void LCD_Init(void) { // Inicializar LCD
   pinMode(LCD_RST, OUTPUT);
   pinMode(LCD_CS, OUTPUT);
@@ -2135,11 +2069,6 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
   digitalWrite(LCD_CS, HIGH);
 }
 
-// Función para detectar choque de objetos
-bool Collision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2){
-  return (x1 < x2 + w2) && (x1+ w1 > x2) && (y1 < y2 + h2) && (y1 + h1 > y2);
-}
-
 // Función para mapear archivos de la SD y dibujarlos linea por linea
 void MapSD(void){
   int hex1 = 0;
@@ -2214,7 +2143,12 @@ int ASCII_Hex(int a){ // Función para convertir un ascii a su valor en hex
   }
 }
 
-void flechita(int x, int y, int c) // Función para colocar una flechita en la posicion indicada
+// Función para detectar choque de objetos
+bool Collision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2){
+  return (x1 < x2 + w2) && (x1+ w1 > x2) && (y1 < y2 + h2) && (y1 + h1 > y2);
+}
+
+void flechita(int x, int y, int c) // Función para dibujar una flechita en la posicion indicada
 {
       delay(5);
       V_line(x, y, 7, c);
@@ -2235,8 +2169,9 @@ void flechita(int x, int y, int c) // Función para colocar una flechita en la p
       delay(5);
 }
 
-void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
+void botones(void) // Función para leer indicadores del arduino y cambiar banderas segun boton escogido
 {
+  // variables que cambia: boton, contador, bandera, aceptar, bandera2, aceptar2, izquierda, derecha, izquierda2, derecha2
   
   recibido = 0;
   Serial5.write(recibido);
@@ -2246,6 +2181,7 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     inByte = Serial5.read();
   }
 
+  // La tiva recibe para seleccionar opciones de menú
   if (inByte == 0)
   {
     boton = 0;
@@ -2274,17 +2210,6 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     boton = 0;
     bandera = 1;
   }
-
-  if (inByte == 3)
-  {
-    boton = 3;
-  }
-
-  if(boton == 3)
-  {
-    aceptar = 1;
-    boton = 0;
-  }
   
   if (inByte == 4)
   {
@@ -2297,17 +2222,18 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     bandera2 = 1;
   }
   
-  if(inByte == 21)
-  {
-    boton = 21;
-  }
-  
   if(boton == 5)
   {
     boton = 0;
     bandera2 = 1;
   }
+    
+  if(inByte == 21)
+  {
+    boton = 21;
+  }
 
+  // La tiva recibe para disparar o dar enter a opciones
   if(inByte == 6)
   {
     boton = 6;
@@ -2319,6 +2245,18 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     boton = 0;
   }
 
+  if (inByte == 3)
+  {
+    boton = 3;
+  }
+
+  if(boton == 3)
+  {
+    aceptar = 1;
+    boton = 0;
+  }
+
+  // La tiva recibe para mover al jugador 1 en modos de un jugador y de dos jugadores
   if(inByte == 7 & (banderamenu == 3 | banderamenu == 4))
   {
     boton = 7;
@@ -2343,6 +2281,7 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     boton = 0;
   }
 
+  // La tiva recibe para mover al jugador 2 en modos de dos jugadores
   if(inByte == 9 & banderamenu == 4)
   {
     boton = 9;
@@ -2366,7 +2305,7 @@ void botones(void) // Función para manejar botones PUSH1 y PUSH2 de la TIVAC
     bandera2 = 1; 
     boton = 0;
   }
-  
+
   recibido = 1;
   inByte = 0;
   Serial5.write(recibido);
